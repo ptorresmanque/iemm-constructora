@@ -1,0 +1,89 @@
+---
+import { projects } from '../data/projects';
+import { useTranslations, type Lang } from '../i18n/ui';
+import ProjectCarousel from './ProjectCarousel.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const spanClasses: Record<string, string> = {
+  large: 'md:col-span-8',
+  small: 'md:col-span-4',
+  wide: 'md:col-span-8',
+};
+---
+
+<section id="projects" class="py-20 md:py-24 bg-white border-y border-[var(--color-outline)]">
+  <div class="container-max px-4 md:px-10">
+    <div class="flex flex-col md:flex-row justify-between md:items-end gap-6 mb-12">
+      <div>
+        <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-[var(--color-secondary-dark)] mb-3">
+          {t('projects.eyebrow')}
+        </span>
+        <h2 class="font-[var(--font-display)] text-3xl md:text-5xl font-bold text-[var(--color-primary)] uppercase mb-2 leading-tight">
+          {t('projects.title')}
+        </h2>
+        <p class="text-[var(--color-on-surface-variant)] text-base max-w-2xl">
+          {t('projects.subtitle')}
+        </p>
+      </div>
+      <a
+        href="#contact"
+        class="hidden md:inline-flex items-center gap-2 text-[var(--color-primary)] text-xs font-bold uppercase tracking-widest border-b-2 border-[var(--color-secondary)] pb-1 hover:text-[var(--color-secondary-dark)] transition-colors"
+      >
+        {t('projects.cta')}
+        <span class="material-symbols-outlined text-base">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+      {projects.map((project) => (
+        <article
+          class={`group relative overflow-hidden h-[360px] md:h-[400px] ${spanClasses[project.span]}`}
+          data-project-id={project.id}
+          data-project-title={t(project.titleKey)}
+          data-project-description={t(project.descriptionKey)}
+          data-project-images={JSON.stringify(project.images)}
+        >
+          <img
+            src={project.cover}
+            alt={t(project.titleKey)}
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 pointer-events-none"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-[var(--color-primary)]/80 via-[var(--color-primary)]/20 to-transparent pointer-events-none flex flex-col justify-end p-6 md:p-8">
+            <span class="bg-[var(--color-secondary)] text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-widest px-2 py-1 w-fit mb-2">
+              {t(`projects.category.${project.category}` as const)}
+            </span>
+            <h3 class="text-white font-[var(--font-display)] text-2xl md:text-3xl font-semibold uppercase leading-tight">
+              {t(project.titleKey)}
+            </h3>
+          </div>
+          <button
+            type="button"
+            class="absolute inset-0 z-10 w-full h-full bg-transparent text-left cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-secondary)] focus-visible:ring-inset"
+            aria-label={`${t('carousel.viewGallery')}: ${t(project.titleKey)}`}
+          >
+            <span class="sr-only">{t('carousel.viewGallery')}</span>
+          </button>
+        </article>
+      ))}
+    </div>
+
+    <div class="md:hidden mt-8 text-center">
+      <a
+        href="#contact"
+        class="inline-flex items-center gap-2 text-[var(--color-primary)] text-xs font-bold uppercase tracking-widest border-b-2 border-[var(--color-secondary)] pb-1"
+      >
+        {t('projects.cta')}
+        <span class="material-symbols-outlined text-base">arrow_forward</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<ProjectCarousel lang={lang} />

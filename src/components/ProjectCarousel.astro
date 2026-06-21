@@ -1,0 +1,273 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<dialog
+  id="project-carousel"
+  aria-label={t('carousel.viewGallery')}
+  data-label-close={t('carousel.close')}
+  data-label-prev={t('carousel.prev')}
+  data-label-next={t('carousel.next')}
+  data-counter-template={t('carousel.counter', { current: 0, total: 0 })}
+  class="fixed inset-0 m-0 p-0 max-w-full max-h-full w-full h-full bg-black/95 text-white border-0 open:animate-[fadeIn_200ms_ease-out]"
+>
+  <div class="relative w-full h-full flex flex-col">
+    <div class="flex justify-between items-center p-4 md:p-6 shrink-0">
+      <div data-carousel-title class="font-[var(--font-display)] text-base md:text-2xl font-bold uppercase tracking-wide pr-4 truncate"></div>
+      <div class="flex items-center gap-3 md:gap-5 shrink-0">
+        <span data-carousel-counter class="text-xs md:text-sm font-bold tabular-nums text-white/80"></span>
+        <button
+          type="button"
+          data-carousel-close
+          aria-label={t('carousel.close')}
+          class="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-white/10 hover:bg-white/20 active:scale-95 transition-all rounded-full"
+        >
+          <span class="material-symbols-outlined text-2xl">close</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="flex-1 flex items-center justify-center px-12 md:px-20 min-h-0 relative">
+      <button
+        type="button"
+        data-carousel-prev
+        aria-label={t('carousel.prev')}
+        class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 z-10 inline-flex items-center justify-center w-11 h-11 md:w-14 md:h-14 bg-white/10 hover:bg-white/25 active:scale-95 transition-all rounded-full backdrop-blur-sm"
+      >
+        <span class="material-symbols-outlined text-3xl md:text-4xl">chevron_left</span>
+      </button>
+
+      <div class="relative w-full h-full flex items-center justify-center">
+        <img
+          data-carousel-image
+          alt=""
+          class="max-h-full max-w-full object-contain select-none transition-opacity duration-200"
+          loading="eager"
+          decoding="async"
+        />
+        <div data-carousel-loading class="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <span class="material-symbols-outlined text-5xl text-white/40 animate-spin">progress_activity</span>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        data-carousel-next
+        aria-label={t('carousel.next')}
+        class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 z-10 inline-flex items-center justify-center w-11 h-11 md:w-14 md:h-14 bg-white/10 hover:bg-white/25 active:scale-95 transition-all rounded-full backdrop-blur-sm"
+      >
+        <span class="material-symbols-outlined text-3xl md:text-4xl">chevron_right</span>
+      </button>
+    </div>
+
+    <div class="shrink-0 px-4 md:px-12 pb-6 md:pb-10 pt-2">
+      <p data-carousel-description class="text-xs md:text-sm text-white/80 text-center max-w-3xl mx-auto leading-relaxed"></p>
+      <div data-carousel-thumbs class="flex justify-center gap-2 md:gap-3 mt-4 md:mt-6"></div>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  dialog#project-carousel::backdrop {
+    background-color: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(8px);
+  }
+  dialog#project-carousel[open] {
+    animation: fadeIn 200ms ease-out;
+  }
+  [data-carousel-loading].hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  type ProjectPayload = {
+    images: string[];
+    title: string;
+    description: string;
+  };
+
+  const dialog = document.getElementById('project-carousel') as HTMLDialogElement | null;
+  if (dialog) {
+    const imgEl = dialog.querySelector('[data-carousel-image]') as HTMLImageElement;
+    const titleEl = dialog.querySelector('[data-carousel-title]') as HTMLElement;
+    const descEl = dialog.querySelector('[data-carousel-description]') as HTMLElement;
+    const counterEl = dialog.querySelector('[data-carousel-counter]') as HTMLElement;
+    const thumbsEl = dialog.querySelector('[data-carousel-thumbs]') as HTMLElement;
+    const loadingEl = dialog.querySelector('[data-carousel-loading]') as HTMLElement;
+    const closeBtn = dialog.querySelector('[data-carousel-close]') as HTMLButtonElement;
+    const prevBtn = dialog.querySelector('[data-carousel-prev]') as HTMLButtonElement;
+    const nextBtn = dialog.querySelector('[data-carousel-next]') as HTMLButtonElement;
+
+    const counterTemplate = dialog.dataset.counterTemplate ?? '{current} of {total}';
+    const labelClose = dialog.dataset.labelClose ?? 'Close';
+    const labelPrev = dialog.dataset.labelPrev ?? 'Previous';
+    const labelNext = dialog.dataset.labelNext ?? 'Next';
+
+    let images: string[] = [];
+    let title = '';
+    let description = '';
+    let current = 0;
+
+    function formatCounter(): string {
+      return counterTemplate
+        .replace('{current}', String(current + 1))
+        .replace('{total}', String(images.length));
+    }
+
+    function renderThumbs() {
+      thumbsEl.innerHTML = '';
+      images.forEach((src, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className =
+          'w-12 h-9 md:w-20 md:h-14 overflow-hidden border-2 transition-all rounded-sm ' +
+          (idx === current
+            ? 'border-[var(--color-secondary)] opacity-100'
+            : 'border-white/20 opacity-50 hover:opacity-80');
+        const thumb = document.createElement('img');
+        thumb.src = src;
+        thumb.alt = '';
+        thumb.loading = 'lazy';
+        thumb.className = 'w-full h-full object-cover';
+        btn.appendChild(thumb);
+        btn.addEventListener('click', () => goTo(idx));
+        thumbsEl.appendChild(btn);
+      });
+    }
+
+    function render() {
+      if (images.length === 0) return;
+      loadingEl.classList.remove('hidden');
+      imgEl.classList.add('opacity-0');
+      imgEl.src = images[current];
+      imgEl.alt = `${title} — imagen ${current + 1} de ${images.length}`;
+      titleEl.textContent = title;
+      descEl.textContent = description;
+      counterEl.textContent = formatCounter();
+      closeBtn.setAttribute('aria-label', labelClose);
+      prevBtn.setAttribute('aria-label', labelPrev);
+      nextBtn.setAttribute('aria-label', labelNext);
+      renderThumbs();
+    }
+
+    imgEl.addEventListener('load', () => {
+      loadingEl.classList.add('hidden');
+      imgEl.classList.remove('opacity-0');
+    });
+
+    imgEl.addEventListener('error', () => {
+      loadingEl.classList.add('hidden');
+      imgEl.classList.remove('opacity-0');
+    });
+
+    function goTo(index: number) {
+      const len = images.length;
+      if (len === 0) return;
+      current = ((index % len) + len) % len;
+      render();
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    function open(payload: ProjectPayload) {
+      images = payload.images;
+      title = payload.title;
+      description = payload.description;
+      current = 0;
+      render();
+      dialog!.showModal();
+      document.documentElement.style.overflow = 'hidden';
+    }
+
+    function close() {
+      dialog!.close();
+      document.documentElement.style.overflow = '';
+      imgEl.src = '';
+    }
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const trigger = target.closest('[data-project-id]') as HTMLElement | null;
+      if (trigger) {
+        e.preventDefault();
+        const id = trigger.dataset.projectId;
+        if (!id) return;
+        const card = document.querySelector(`[data-project-id="${CSS.escape(id)}"]`) as HTMLElement | null;
+        if (!card) return;
+        try {
+          const images = JSON.parse(card.dataset.projectImages ?? '[]') as string[];
+          open({
+            images,
+            title: card.dataset.projectTitle ?? '',
+            description: card.dataset.projectDescription ?? '',
+          });
+        } catch (err) {
+          console.error('[carousel] failed to parse project data', err);
+        }
+        return;
+      }
+      if (target.closest('[data-carousel-close]')) {
+        close();
+      } else if (target.closest('[data-carousel-next]')) {
+        next();
+      } else if (target.closest('[data-carousel-prev]')) {
+        prev();
+      }
+    });
+
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) close();
+    });
+
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    });
+
+    dialog.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      close();
+    });
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    const SWIPE_THRESHOLD = 50;
+
+    dialog.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+    }, { passive: true });
+
+    dialog.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      touchEndX = t.clientX;
+      touchEndY = t.clientY;
+    }, { passive: true });
+
+    dialog.addEventListener('touchend', () => {
+      const dx = touchEndX - touchStartX;
+      const dy = touchEndY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD) {
+        if (dx < 0) next();
+        else prev();
+      }
+      touchStartX = touchEndX = touchStartY = touchEndY = 0;
+    }, { passive: true });
+  }
+</script>

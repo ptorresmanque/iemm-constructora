@@ -1,0 +1,72 @@
+---
+interface Props {
+  eyebrow: string;
+  titleA: string;
+  titleHighlight: string;
+  titleB: string;
+  subtitle: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+}
+
+const {
+  eyebrow,
+  titleA,
+  titleHighlight,
+  titleB,
+  subtitle,
+  ctaPrimary,
+  ctaSecondary,
+} = Astro.props;
+---
+
+<section id="top" class="relative h-[90vh] min-h-[640px] flex items-center overflow-hidden bg-[var(--color-primary-deep)]">
+  <div class="absolute inset-0 z-0">
+    <img
+      src="/images/hero-construction.jpg"
+      alt="Modern skyscraper under construction at sunrise, representing industrial strength and engineering precision."
+      class="w-full h-full object-cover brightness-50"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+
+  <div class="relative z-10 container-max w-full px-4 md:px-10">
+    <div class="max-w-3xl">
+      <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-[var(--color-secondary)] mb-6">
+        {eyebrow}
+      </span>
+      <h1 class="font-[var(--font-display)] text-4xl sm:text-5xl md:text-6xl font-bold uppercase tracking-tight text-white leading-[1.1] mb-6 text-balance">
+        {titleA}
+        <span class="text-[var(--color-secondary)]">{titleHighlight}</span>
+        {titleB}
+      </h1>
+      <p class="font-[var(--font-body)] text-base sm:text-lg text-white/90 max-w-xl mb-10 leading-relaxed text-pretty">
+        {subtitle}
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a
+          href="#contact"
+          class="inline-flex items-center justify-center h-14 px-8 bg-[var(--color-secondary)] text-[var(--color-primary)] text-xs font-bold uppercase tracking-widest rounded hover:bg-[var(--color-secondary-light)] active:scale-95 transition-all"
+        >
+          {ctaPrimary}
+        </a>
+        <a
+          href="#projects"
+          class="inline-flex items-center justify-center h-14 px-8 border-2 border-white text-white text-xs font-bold uppercase tracking-widest rounded hover:bg-white/10 active:scale-95 transition-all"
+        >
+          {ctaSecondary}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="absolute bottom-0 right-0 w-32 h-32 bg-[var(--color-secondary)]/20 backdrop-blur-sm transform rotate-45 translate-x-16 translate-y-16 pointer-events-none"
+    aria-hidden="true"
+  ></div>
+
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 animate-bounce text-white/70 hidden md:block" aria-hidden="true">
+    <span class="material-symbols-outlined text-4xl">keyboard_arrow_down</span>
+  </div>
+</section>

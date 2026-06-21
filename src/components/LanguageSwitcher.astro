@@ -1,0 +1,31 @@
+---
+import { languages, defaultLang, type Lang } from '../i18n/ui';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+interface Props {
+  currentLang: Lang;
+  label: string;
+}
+
+const { currentLang, label } = Astro.props;
+const otherLang = currentLang === 'es' ? 'en' : 'es';
+const otherHref = getRelativeLocaleUrl(otherLang, Astro.url.pathname.replace(/^\/(en|es)/, '') || '/');
+---
+
+<div class="relative">
+  <label class="sr-only" for="lang-switcher">{label}</label>
+  <select
+    id="lang-switcher"
+    onchange="window.location.href = this.value"
+    class="appearance-none cursor-pointer bg-transparent border border-[var(--color-outline)] text-sm font-semibold uppercase tracking-widest py-2 pl-3 pr-8 text-[var(--color-primary)] hover:border-[var(--color-secondary)] focus:outline-none focus:border-[var(--color-secondary)] transition-colors rounded"
+  >
+    {Object.entries(languages).map(([code, name]) => (
+      <option value={code === currentLang ? Astro.url.pathname : otherHref} selected={code === currentLang}>
+        {name}
+      </option>
+    ))}
+  </select>
+  <span class="material-symbols-outlined pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-primary)] text-base">
+    expand_more
+  </span>
+</div>

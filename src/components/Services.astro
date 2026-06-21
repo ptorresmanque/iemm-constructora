@@ -1,0 +1,58 @@
+---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const services = [
+  { icon: 'foundation', titleKey: 'services.1.title' as const, descKey: 'services.1.desc' as const },
+  { icon: 'handyman', titleKey: 'services.2.title' as const, descKey: 'services.2.desc' as const },
+  { icon: 'engineering', titleKey: 'services.3.title' as const, descKey: 'services.3.desc' as const },
+];
+---
+
+<section id="services" class="py-20 md:py-24 bg-[var(--color-surface)]">
+  <div class="container-max px-4 md:px-10">
+    <div class="text-center mb-12 md:mb-16">
+      <span class="inline-block text-xs font-bold uppercase tracking-[0.3em] text-[var(--color-secondary-dark)] mb-3">
+        {t('services.eyebrow')}
+      </span>
+      <h2 class="font-[var(--font-display)] text-3xl md:text-5xl font-bold text-[var(--color-primary)] uppercase mb-4 leading-tight">
+        {t('services.title')}
+      </h2>
+      <div class="w-20 h-1 bg-[var(--color-secondary)] mx-auto" aria-hidden="true"></div>
+      <p class="text-[var(--color-on-surface-variant)] text-base max-w-2xl mx-auto mt-6">
+        {t('services.subtitle')}
+      </p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+      {services.map((service) => (
+        <div class="group p-8 md:p-10 border border-[var(--color-outline)] bg-white hover:border-[var(--color-primary)] transition-all rounded">
+          <div class="w-16 h-16 bg-[var(--color-surface-dim)] flex items-center justify-center mb-8 group-hover:bg-[var(--color-primary)] transition-colors">
+            <span class="material-symbols-outlined text-4xl text-[var(--color-primary)] group-hover:text-white transition-colors">
+              {service.icon}
+            </span>
+          </div>
+          <h3 class="font-[var(--font-display)] text-xl md:text-2xl font-semibold text-[var(--color-primary)] mb-4">
+            {t(service.titleKey)}
+          </h3>
+          <p class="text-sm md:text-base text-[var(--color-on-surface-variant)] mb-6 leading-relaxed">
+            {t(service.descKey)}
+          </p>
+          <a
+            href="#contact"
+            class="inline-flex items-center gap-2 text-[var(--color-primary)] text-xs font-bold uppercase tracking-widest hover:gap-4 transition-all"
+          >
+            {t('services.cta')}
+            <span class="material-symbols-outlined text-base">trending_flat</span>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,38 @@
+---
+interface Props {
+  variant?: 'light' | 'dark';
+  showText?: boolean;
+  class?: string;
+}
+
+const { variant = 'light', showText = true, class: className = '' } = Astro.props;
+
+const textClass = variant === 'dark' ? 'text-white' : 'text-[var(--color-primary)]';
+---
+
+<a href="#top" class={`group inline-flex items-center gap-3 ${className}`} aria-label="IEMM Constructora — Inicio">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 40 40"
+    class="h-10 w-10 transition-transform group-hover:rotate-3"
+    aria-hidden="true"
+  >
+    <rect width="40" height="40" x="0" y="0" fill={variant === 'dark' ? '#ffffff' : '#1E3A8A'} rx="4" />
+    <path
+      d="M10 30 L10 12 L20 22 L30 12 L30 30"
+      stroke="#FACC15"
+      stroke-width="4"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+  {showText && (
+    <span class={`flex flex-col leading-none ${textClass}`}>
+      <span class="font-[var(--font-display)] text-2xl font-extrabold tracking-tight">IEMM</span>
+      <span class="font-[var(--font-display)] text-[10px] font-normal tracking-[0.25em] uppercase opacity-80">
+        Constructora
+      </span>
+    </span>
+  )}
+</a>

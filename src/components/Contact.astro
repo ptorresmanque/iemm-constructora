@@ -1,0 +1,145 @@
+---
+import { actions, isInputError } from 'astro:actions';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  result?: Awaited<ReturnType<typeof Astro.callAction>>;
+}
+
+const { lang, result } = Astro.props;
+const t = useTranslations(lang);
+
+const inputError = result && isInputError(result.error) ? result.error : null;
+const serverError = result && result.error && !isInputError(result.error) ? result.error : null;
+const success = Boolean(result && !result.error);
+---
+
+<section id="contact" class="bg-[var(--color-primary)] py-20 md:py-24 text-white">
+  <div class="container-max px-4 md:px-10">
+    <div class="grid md:grid-cols-2 gap-12 md:gap-16">
+      <div>
+        <h2 class="font-[var(--font-display)] text-3xl md:text-5xl font-bold uppercase mb-8 leading-tight text-balance">
+          {t('contact.title')}
+        </h2>
+        <p class="text-white/70 mb-12 text-base md:text-lg max-w-md leading-relaxed">
+          {t('contact.subtitle')}
+        </p>
+
+        <div class="space-y-6 md:space-y-8">
+          <div class="flex items-start gap-4">
+            <div class="bg-[var(--color-secondary)] p-3 shrink-0">
+              <span class="material-symbols-outlined text-[var(--color-primary)]">location_on</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-widest mb-1">{t('contact.location.title')}</h4>
+              <p class="text-sm text-white/70 whitespace-pre-line leading-relaxed">
+                {t('contact.location.value')}
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="bg-[var(--color-secondary)] p-3 shrink-0">
+              <span class="material-symbols-outlined text-[var(--color-primary)]">call</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-widest mb-1">{t('contact.phone.title')}</h4>
+              <p class="text-sm text-white/70">{t('contact.phone.value')}</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="bg-[var(--color-secondary)] p-3 shrink-0">
+              <span class="material-symbols-outlined text-[var(--color-primary)]">mail</span>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-widest mb-1">{t('contact.email.title')}</h4>
+              <p class="text-sm text-white/70 break-all">{t('contact.email.value')}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white text-[var(--color-on-surface)] p-8 md:p-10 rounded">
+        {success && (
+          <div role="status" class="mb-6 p-4 bg-green-50 border border-green-200 text-green-800 text-sm rounded">
+            {t('contact.form.success')}
+          </div>
+        )}
+        {serverError && (
+          <div role="alert" class="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 text-sm rounded">
+            {t('contact.form.error')}
+          </div>
+        )}
+
+        <form method="POST" action={actions.contact} class="space-y-6">
+          <div>
+            <label for="name" class="block text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-widest mb-2">
+              {t('contact.form.name')}
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              minlength="2"
+              maxlength="120"
+              placeholder={t('contact.form.name.placeholder')}
+              class="w-full border border-[var(--color-outline)] focus:border-[var(--color-primary)] focus:ring-0 focus:shadow-[inset_0_0_0_1px_var(--color-primary)] p-4 text-sm transition-all outline-none rounded"
+              aria-invalid={Boolean(inputError?.fields.name) || undefined}
+            />
+            {inputError?.fields.name && (
+              <p class="mt-1 text-xs text-[var(--color-error)]">{inputError.fields.name[0]}</p>
+            )}
+          </div>
+
+          <div>
+            <label for="email" class="block text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-widest mb-2">
+              {t('contact.form.email')}
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              placeholder={t('contact.form.email.placeholder')}
+              class="w-full border border-[var(--color-outline)] focus:border-[var(--color-primary)] focus:ring-0 focus:shadow-[inset_0_0_0_1px_var(--color-primary)] p-4 text-sm transition-all outline-none rounded"
+              aria-invalid={Boolean(inputError?.fields.email) || undefined}
+            />
+            {inputError?.fields.email && (
+              <p class="mt-1 text-xs text-[var(--color-error)]">{inputError.fields.email[0]}</p>
+            )}
+          </div>
+
+          <div>
+            <label for="message" class="block text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-widest mb-2">
+              {t('contact.form.message')}
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              required
+              minlength="10"
+              maxlength="5000"
+              rows="4"
+              placeholder={t('contact.form.message.placeholder')}
+              class="w-full border border-[var(--color-outline)] focus:border-[var(--color-primary)] focus:ring-0 focus:shadow-[inset_0_0_0_1px_var(--color-primary)] p-4 text-sm transition-all outline-none resize-none rounded"
+              aria-invalid={Boolean(inputError?.fields.message) || undefined}
+            ></textarea>
+            {inputError?.fields.message && (
+              <p class="mt-1 text-xs text-[var(--color-error)]">{inputError.fields.message[0]}</p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-[var(--color-secondary)] text-[var(--color-primary)] font-bold py-5 hover:bg-[var(--color-secondary-light)] active:scale-[0.98] transition-all text-xs uppercase tracking-widest rounded"
+          >
+            {t('contact.form.submit')}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

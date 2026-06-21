@@ -1,0 +1,43 @@
+---
+import { actions } from 'astro:actions';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import About from '../../components/About.astro';
+import Projects from '../../components/Projects.astro';
+import Services from '../../components/Services.astro';
+import Contact from '../../components/Contact.astro';
+import { useTranslations } from '../../i18n/ui';
+
+const lang = 'en' as const;
+const t = useTranslations(lang);
+
+const contactResult = Astro.getActionResult(actions.contact);
+---
+
+<BaseLayout title={t('meta.title')} description={t('meta.description')} lang={lang}>
+  <Hero
+    eyebrow={t('hero.eyebrow')}
+    titleA={t('hero.title.a')}
+    titleHighlight={t('hero.title.highlight')}
+    titleB={t('hero.title.b')}
+    subtitle={t('hero.subtitle')}
+    ctaPrimary={t('hero.cta.primary')}
+    ctaSecondary={t('hero.cta.secondary')}
+  />
+
+  <About
+    eyebrow={t('about.eyebrow')}
+    title={t('about.title')}
+    p1={t('about.p1')}
+    p2={t('about.p2')}
+    badgeNumber={t('about.badge.number')}
+    badgeText={t('about.badge.text')}
+    list={[t('about.list.1'), t('about.list.2'), t('about.list.3')]}
+  />
+
+  <Projects lang={lang} />
+
+  <Services lang={lang} />
+
+  <Contact lang={lang} result={contactResult} />
+</BaseLayout>

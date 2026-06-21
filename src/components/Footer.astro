@@ -1,0 +1,38 @@
+---
+import Logo from './Logo.astro';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const links = [
+  { href: '#', label: t('footer.privacy') },
+  { href: '#', label: t('footer.terms') },
+  { href: '#', label: t('footer.careers') },
+  { href: '#', label: t('footer.linkedin') },
+];
+---
+
+<footer class="bg-[var(--color-tertiary)] text-white py-12">
+  <div class="container-max px-4 md:px-10 flex flex-col md:flex-row justify-between items-center gap-6">
+    <div class="flex flex-col gap-2 text-center md:text-left">
+      <Logo variant="dark" showText={true} />
+      <p class="text-xs text-white/60 mt-1">{t('footer.copyright')}</p>
+    </div>
+
+    <nav class="flex flex-wrap justify-center gap-6 md:gap-8" aria-label="Footer">
+      {links.map((l) => (
+        <a
+          href={l.href}
+          class="text-xs font-bold uppercase tracking-widest text-white/70 hover:text-white transition-colors"
+        >
+          {l.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</footer>
