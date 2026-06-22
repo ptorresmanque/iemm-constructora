@@ -47,7 +47,8 @@ const htmlLang = lang === 'es' ? 'es' : 'en';
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content={ogLocale} />
-    <meta property="og:image" content="/images/hero-construction.jpg" />
+    <meta property="og:url" content={Astro.url.toString()} />
+    <meta property="og:image" content={new URL('/images/hero-construction.jpg', Astro.site).toString()} />
     <meta name="twitter:card" content="summary_large_image" />
 
     <title>{title}</title>

@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, CONTACT_TO } from 'astro:env/server';
 
 interface ContactPayload {
   name: string;
@@ -14,35 +15,18 @@ interface MailerConfig {
   to: string;
 }
 
-function getConfig(): MailerConfig | null {
-  const host = import.meta.env.SMTP_HOST;
-  const port = import.meta.env.SMTP_PORT;
-  const user = import.meta.env.SMTP_USER;
-  const pass = import.meta.env.SMTP_PASS;
-  const to = import.meta.env.CONTACT_TO;
-
-  if (!host || !port || !user || !pass || !to) {
-    return null;
-  }
-
+function getConfig(): MailerConfig {
   return {
-    host,
-    port: Number(port),
-    user,
-    pass,
-    to,
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    user: SMTP_USER,
+    pass: SMTP_PASS,
+    to: CONTACT_TO,
   };
 }
 
 export async function sendContactEmail(payload: ContactPayload): Promise<{ delivered: boolean; reason?: string }> {
   const config = getConfig();
-
-  if (!config) {
-    console.warn('[mailer] SMTP env vars missing — logging message only.');
-    console.log('[mailer] contact form submission:', payload);
-    return { delivered: true, reason: 'logged-only' };
-  }
-
   const transporter = nodemailer.createTransport({
     host: config.host,
     port: config.port,
@@ -79,7 +63,8 @@ export async function sendContactEmail(payload: ContactPayload): Promise<{ deliv
     return { delivered: true };
   } catch (err) {
     const reason = err instanceof Error ? err.message : 'unknown error';
-    console.error('[mailer] send failed:', reason);
+    console.error('[mailer] send failed — logging payload as fallback:', reason);
+    console.log('[mailer] contact form submission:', payload);
     return { delivered: false, reason };
   }
 }
