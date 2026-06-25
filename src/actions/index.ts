@@ -1,5 +1,5 @@
 import { defineAction, ActionError } from 'astro:actions';
-import { z } from 'astro:schema';
+import { z } from 'astro/zod';
 import { sendContactEmail } from '../lib/mailer';
 
 export const server = {

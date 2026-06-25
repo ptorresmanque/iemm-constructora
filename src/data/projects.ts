@@ -1,8 +1,8 @@
 import type { Lang } from '../i18n/ui';
 
-export type ProjectCategory = 'residential' | 'corporate' | 'industrial' | 'infrastructure';
+export type ProjectCategory = 'repair' | 'infrastructure' | 'sports';
 
-export type ProjectId = 'alura' | 'techhub' | 'logistica' | 'puente';
+export type ProjectId = 'reparaciones' | 'edfUfro' | 'canchaFutbol' | 'canchaInterior' | 'hidropack' | 'iglesia';
 
 export interface Project {
   id: ProjectId;
@@ -14,70 +14,98 @@ export interface Project {
   span: 'large' | 'small' | 'wide';
 }
 
-const PICSUM_BASE = 'https://picsum.photos/seed';
-const SIZE = '1600/900';
-
-function picsum(id: ProjectId, n: number): string {
-  return `${PICSUM_BASE}/iemm-${id}-${n}/${SIZE}`;
-}
 
 export const projects: Project[] = [
   {
-    id: 'alura',
-    category: 'residential',
-    titleKey: 'projects.alura.title',
-    descriptionKey: 'projects.alura.description',
-    cover: '/images/project-alura.jpg',
+    id: 'reparaciones',
+    category: 'repair',
+    titleKey: 'projects.reparaciones.title',
+    descriptionKey: 'projects.reparaciones.description',
+    cover: '/images/project-reparaciones.jpg',
     images: [
-      '/images/project-alura.jpg',
-      picsum('alura', 2),
-      picsum('alura', 3),
-      picsum('alura', 4),
+      '/images/project-reparaciones.jpg',
+      '/images/project-reparaciones1.jpg',
+      '/images/project-reparaciones2.jpg',
+      '/images/project-reparaciones3.jpg',
+      '/images/project-reparaciones4.jpg',
+      '/images/project-reparaciones5.jpg',
+    ],
+    span: 'small',
+  },
+  {
+    id: 'edfUfro',
+    category: 'infrastructure',
+    titleKey: 'projects.edfUfro.title',
+    descriptionKey: 'projects.edfUfro.description',
+    cover: '/images/project-edfUfro.jpg',
+    images: [
+      '/images/project-edfUfro.jpg',
+      '/images/project-edfUfro1.jpg',
+      '/images/project-edfUfro2.jpg',
+      '/images/project-edfUfro3.jpg',
+      '/images/project-edfUfro4.jpg',
+      '/images/project-edfUfro5.jpg',
     ],
     span: 'large',
   },
   {
-    id: 'techhub',
-    category: 'corporate',
-    titleKey: 'projects.techhub.title',
-    descriptionKey: 'projects.techhub.description',
-    cover: '/images/project-techhub.jpg',
+    id: 'canchaFutbol',
+    category: 'sports',
+    titleKey: 'projects.canchaFutbol.title',
+    descriptionKey: 'projects.canchaFutbol.description',
+    cover: '/images/project-canchaFutbol.jpg',
     images: [
-      '/images/project-techhub.jpg',
-      picsum('techhub', 2),
-      picsum('techhub', 3),
-      picsum('techhub', 4),
-    ],
-    span: 'small',
-  },
-  {
-    id: 'logistica',
-    category: 'industrial',
-    titleKey: 'projects.logistica.title',
-    descriptionKey: 'projects.logistica.description',
-    cover: '/images/project-logistica.jpg',
-    images: [
-      '/images/project-logistica.jpg',
-      picsum('logistica', 2),
-      picsum('logistica', 3),
-      picsum('logistica', 4),
-    ],
-    span: 'small',
-  },
-  {
-    id: 'puente',
-    category: 'infrastructure',
-    titleKey: 'projects.puente.title',
-    descriptionKey: 'projects.puente.description',
-    cover: '/images/project-puente.jpg',
-    images: [
-      '/images/project-puente.jpg',
-      picsum('puente', 2),
-      picsum('puente', 3),
-      picsum('puente', 4),
+      '/images/project-canchaFutbol.jpg',
+      '/images/project-canchaFutbol1.jpg',
+      '/images/project-canchaFutbol2.jpg',
+      '/images/project-canchaFutbol3.jpg',
+      '/images/project-canchaFutbol4.jpg',
+      '/images/project-canchaFutbol5.jpg'
     ],
     span: 'wide',
   },
+  {
+    id: 'canchaInterior',
+    category: 'sports',
+    titleKey: 'projects.canchaInterior.title',
+    descriptionKey: 'projects.canchaInterior.description',
+    cover: '/images/project-canchaInterior.jpg',
+    images: [
+      '/images/project-canchaInterior.jpg',
+      '/images/project-canchaInterior1.jpg',
+      '/images/project-canchaInterior2.jpg'
+    ],
+    span: 'small',
+  },
+  {
+    id: 'iglesia',
+    category: 'infrastructure',
+    titleKey: 'projects.iglesia.title',
+    descriptionKey: 'projects.iglesia.description',
+    cover: '/images/project-iglesia.jpg',
+    images: [
+      '/images/project-iglesia.jpg',
+      '/images/project-iglesia1.jpg',
+      '/images/project-iglesia2.jpg',
+      '/images/project-iglesia3.jpg'
+    ],
+    span: 'small',
+  },
+  {
+    id: 'hidropack',
+    category: 'infrastructure',
+    titleKey: 'projects.hidropack.title',
+    descriptionKey: 'projects.hidropack.description',
+    cover: '/images/project-hidropack.jpg',
+    images: [
+      '/images/project-hidropack.jpg',
+      '/images/project-hidropack1.jpg',
+      '/images/project-hidropack2.jpg',
+      '/images/project-hidropack3.jpg',
+      '/images/project-hidropack4.jpg',
+    ],
+    span: 'wide',
+  }
 ];
 
 export function getCategoryLabel(category: ProjectCategory, lang: Lang): string {
